@@ -13,7 +13,7 @@ from .core import (
     unregister,
 )
 from .yahoo import yahoo_equities
-
+from .csvdir import csvdir_equities
 
 __all__ = [
     'UnknownBundle',
@@ -27,4 +27,5 @@ __all__ = [
     'to_bundle_ingest_dirname',
     'unregister',
     'yahoo_equities',
+    'csvdir_equities',
 ]

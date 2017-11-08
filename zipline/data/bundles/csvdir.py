@@ -14,7 +14,7 @@ from zipline.utils.calendars import register_calendar_alias
 from zipline.utils.cli import maybe_show_progress
 
 logger = logbook.Logger(__name__)
-exchanges =['CSVDIR']
+exchanges =['SMART']
 
 
 def csvdir_equities(tframes=['daily'], start=None, end=None):

@@ -48,7 +48,17 @@ Position = namedtuple('Position', ['contract', 'position', 'market_price',
                                    'market_value', 'average_cost',
                                    'unrealized_pnl', 'realized_pnl',
                                    'account_name'])
+ExceptionSymbols = {}
+ExceptionSymbols['VIX']=['CBOE','IND']
+ExceptionSymbols['GLD']=['ARCA','STK']
+ExceptionSymbols['GDX']=['ARCA','STK']
+DefaultRouter = ['SMART','STK']
 
+def check_symbol(symbol)
+    if symbol in ExceptionSymbols.keys():
+        return ExceptionSymbols[symbol]
+    else:
+        return DefaultRouter
 
 def log_message(message, mapping):
     try:
@@ -141,12 +151,13 @@ class TWSConnection(EClientSocket, EWrapper):
             # Already subscribed to market data
             return
 
+        [_exchange, _sec_type] = check_symbol(symbol)
+        
         contract = Contract()
         contract.m_symbol = symbol
-        contract.m_secType = sec_type
-        contract.m_exchange = exchange
+        contract.m_secType = _sec_type
+        contract.m_exchange = _exchange
         contract.m_currency = currency
-
         ticker_id = self.next_ticker_id
 
         self.symbol_to_ticker_id[symbol] = ticker_id
@@ -489,11 +500,13 @@ class IBBroker(Broker):
             stop=style.get_stop_price(is_buy),
             limit=style.get_limit_price(is_buy))
 
+        [_exchange, _sec_type] = check_symbol(symbol)
+        
         contract = Contract()
         contract.m_symbol = str(asset.symbol)
         contract.m_currency = self.currency
-        contract.m_exchange = 'SMART'
-        contract.m_secType = 'STK'
+        contract.m_exchange = _exchange
+        contract.m_secType = _sec_type
 
         order = Order()
         order.m_totalQuantity = int(fabs(amount))

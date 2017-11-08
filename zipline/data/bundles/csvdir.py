@@ -94,7 +94,7 @@ class CSVDIRBundle:
         self.exchanges = {}
         self.assettypes = {}
         self.csvfiles = {}
-        self.exchangeslist=[]
+
 
     def ingest(self, environ, asset_db_writer, minute_bar_writer,
                daily_bar_writer, adjustment_writer, calendar, start_session,
@@ -221,8 +221,8 @@ class CSVDIRBundle:
 
                 yield sid, dfr
                 
-        self.exchangeslist.extend(list(set(self.exchanges.values())))
+        exchanges.extend(list(set(self.exchanges.values())))
 
-self.exchangeslist = list(set(self.exchangeslist))
-for exchange in self.exchangeslist:
+exchanges = list(set(exchanges))
+for exchange in exchanges:
     register_calendar_alias(exchange, "NYSE")

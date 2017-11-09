@@ -50,7 +50,6 @@ Position = namedtuple('Position', ['contract', 'position', 'market_price',
                                    'account_name'])
 
 
-
 symbol_to_exchange = defaultdict(lambda: 'SMART')
 symbol_to_exchange['VIX'] = 'CBOE'
 symbol_to_exchange['GLD'] = 'ARCA'
@@ -150,7 +149,7 @@ class TWSConnection(EClientSocket, EWrapper):
         if symbol in self.symbol_to_ticker_id:
             # Already subscribed to market data
             return
-        
+
         contract = Contract()
         contract.m_symbol = symbol
         contract.m_secType = symbol_to_sec_type[symbol]
@@ -497,7 +496,7 @@ class IBBroker(Broker):
             amount=amount,
             stop=style.get_stop_price(is_buy),
             limit=style.get_limit_price(is_buy))
-        
+
         contract = Contract()
         contract.m_symbol = str(asset.symbol)
         contract.m_currency = self.currency

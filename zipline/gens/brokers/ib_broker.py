@@ -48,17 +48,17 @@ Position = namedtuple('Position', ['contract', 'position', 'market_price',
                                    'market_value', 'average_cost',
                                    'unrealized_pnl', 'realized_pnl',
                                    'account_name'])
-ExceptionSymbols = {}
-ExceptionSymbols['VIX']=['CBOE','IND']
-ExceptionSymbols['GLD']=['ARCA','STK']
-ExceptionSymbols['GDX']=['ARCA','STK']
-DefaultRouter = ['SMART','STK']
 
-def check_symbol(symbol)
-    if symbol in ExceptionSymbols.keys():
-        return ExceptionSymbols[symbol]
-    else:
-        return DefaultRouter
+
+
+symbol_to_exchange = defaultdict(lambda: 'SMART')
+symbol_to_exchange['VIX'] = 'CBOE'
+symbol_to_exchange['GLD'] = 'ARCA'
+symbol_to_exchange['GDX'] = 'ARCA'
+
+symbol_to_sec_type = defaultdict(lambda: 'STK')
+symbol_to_sec_type['VIX'] = 'IND'
+
 
 def log_message(message, mapping):
     try:
@@ -150,13 +150,11 @@ class TWSConnection(EClientSocket, EWrapper):
         if symbol in self.symbol_to_ticker_id:
             # Already subscribed to market data
             return
-
-        [_exchange, _sec_type] = check_symbol(symbol)
         
         contract = Contract()
         contract.m_symbol = symbol
-        contract.m_secType = _sec_type
-        contract.m_exchange = _exchange
+        contract.m_secType = symbol_to_sec_type[symbol]
+        contract.m_exchange = symbol_to_exchange[symbol]
         contract.m_currency = currency
         ticker_id = self.next_ticker_id
 
@@ -499,14 +497,12 @@ class IBBroker(Broker):
             amount=amount,
             stop=style.get_stop_price(is_buy),
             limit=style.get_limit_price(is_buy))
-
-        [_exchange, _sec_type] = check_symbol(symbol)
         
         contract = Contract()
         contract.m_symbol = str(asset.symbol)
         contract.m_currency = self.currency
-        contract.m_exchange = _exchange
-        contract.m_secType = _sec_type
+        contract.m_exchange = symbol_to_exchange[str(asset.symbol)]
+        contract.m_secType = symbol_to_sec_type[str(asset.symbol)]
 
         order = Order()
         order.m_totalQuantity = int(fabs(amount))
